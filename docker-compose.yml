@@ -1,0 +1,36 @@
+services:
+
+  mysql:
+    image: mysql:8.0
+    container_name: resumeai-mysql
+    environment:
+      MYSQL_DATABASE: resume_analyzer
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
+    ports:
+      - "3307:3306"
+    volumes:
+      - mysql_data:/var/lib/mysql
+
+  backend:
+    build: .
+    container_name: resumeai-backend
+    depends_on:
+      - mysql
+    ports:
+      - "8081:8080"
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:mysql://mysql:3306/resume_analyzer
+      SPRING_DATASOURCE_USERNAME: root
+      SPRING_DATASOURCE_PASSWORD: ${MYSQL_ROOT_PASSWORD}
+      GEMINI_API_KEY: ${GEMINI_API_KEY}
+
+  frontend:
+    build: ./frontend
+    container_name: resumeai-frontend
+    depends_on:
+      - backend
+    ports:
+      - "5173:5173"
+
+volumes:
+  mysql_data:
