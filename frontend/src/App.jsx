@@ -8,6 +8,7 @@ import Analysis from "./pages/Analysis";
 import JobMatching from "./pages/JobMatching";
 import ResumeDetails from "./pages/ResumeDetails";
 import AddJob from "./pages/AddJob";
+import AISuggestions from "./pages/AISuggestions";
 import {
   FileText,
   Briefcase,
@@ -45,149 +46,161 @@ function Dashboard() {
   }, []);
 
   if (!dashboard) {
-    return <h2 className="p-8">Loading...</h2>;
+    return (
+      <div className="flex min-h-screen items-center justify-center bg-slate-50">
+        <div className="text-center">
+          <div className="mx-auto h-8 w-8 animate-spin rounded-full border-4 border-slate-200 border-t-blue-600"></div>
+          <p className="mt-3 text-sm text-slate-500">
+            Loading your dashboard...
+          </p>
+        </div>
+      </div>
+    );
   }
 
+  const stats = [
+    {
+      title: "Total Resumes",
+      value: dashboard.totalResumes,
+      icon: FileText,
+      bg: "bg-blue-50",
+      iconColor: "text-blue-600",
+    },
+    {
+      title: "Total Jobs",
+      value: dashboard.totalJobs,
+      icon: Briefcase,
+      bg: "bg-violet-50",
+      iconColor: "text-violet-600",
+    },
+    {
+      title: "Total Matches",
+      value: dashboard.totalMatches,
+      icon: Target,
+      bg: "bg-emerald-50",
+      iconColor: "text-emerald-600",
+    },
+    {
+      title: "Average ATS Score",
+      value: `${dashboard.averageAtsScore}%`,
+      icon: BarChart3,
+      bg: "bg-orange-50",
+      iconColor: "text-orange-600",
+    },
+  ];
+
   return (
-    <div className="flex min-h-screen bg-slate-100">
+    <div className="flex min-h-screen bg-slate-50">
 
       <Sidebar />
 
-      <main className="flex-1">
+      <main className="min-w-0 flex-1">
 
         <Navbar />
 
-        <div className="p-8">
+        <div className="p-4 sm:p-6 lg:p-8">
 
-          <h1 className="text-3xl font-bold text-slate-800">
-            Dashboard
-          </h1>
+          {/* Header */}
+          <div className="mb-8">
 
-          <p className="mt-2 text-slate-500">
-            Welcome to your ResumeAI dashboard
-          </p>
+            <p className="text-sm font-medium text-blue-600">
+              Overview
+            </p>
 
-          {/* Dashboard Cards */}
-          <div className="mt-8 grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-4">
+            <h1 className="mt-1 text-3xl font-bold tracking-tight text-slate-900">
+              Dashboard
+            </h1>
 
-            {/* Total Resumes */}
-            <div className="rounded-xl bg-white p-6 shadow-sm">
-              <div className="flex items-center justify-between">
-
-                <div>
-                  <p className="text-slate-500">
-                    Total Resumes
-                  </p>
-
-                  <h2 className="mt-2 text-3xl font-bold text-slate-800">
-                    {dashboard.totalResumes}
-                  </h2>
-                </div>
-
-                <div className="rounded-lg bg-blue-100 p-3">
-                  <FileText
-                    className="text-blue-600"
-                    size={28}
-                  />
-                </div>
-
-              </div>
-            </div>
-
-            {/* Total Jobs */}
-            <div className="rounded-xl bg-white p-6 shadow-sm">
-              <div className="flex items-center justify-between">
-
-                <div>
-                  <p className="text-slate-500">
-                    Total Jobs
-                  </p>
-
-                  <h2 className="mt-2 text-3xl font-bold text-slate-800">
-                    {dashboard.totalJobs}
-                  </h2>
-                </div>
-
-                <div className="rounded-lg bg-purple-100 p-3">
-                  <Briefcase
-                    className="text-purple-600"
-                    size={28}
-                  />
-                </div>
-
-              </div>
-            </div>
-
-            {/* Total Matches */}
-            <div className="rounded-xl bg-white p-6 shadow-sm">
-              <div className="flex items-center justify-between">
-
-                <div>
-                  <p className="text-slate-500">
-                    Total Matches
-                  </p>
-
-                  <h2 className="mt-2 text-3xl font-bold text-slate-800">
-                    {dashboard.totalMatches}
-                  </h2>
-                </div>
-
-                <div className="rounded-lg bg-green-100 p-3">
-                  <Target
-                    className="text-green-600"
-                    size={28}
-                  />
-                </div>
-
-              </div>
-            </div>
-
-            {/* Average ATS Score */}
-            <div className="rounded-xl bg-white p-6 shadow-sm">
-              <div className="flex items-center justify-between">
-
-                <div>
-                  <p className="text-slate-500">
-                    Average ATS Score
-                  </p>
-
-                  <h2 className="mt-2 text-3xl font-bold text-slate-800">
-                    {dashboard.averageAtsScore}%
-                  </h2>
-                </div>
-
-                <div className="rounded-lg bg-orange-100 p-3">
-                  <BarChart3
-                    className="text-orange-600"
-                    size={28}
-                  />
-                </div>
-
-              </div>
-            </div>
+            <p className="mt-2 text-sm text-slate-500">
+              Track your resumes, job matches and ATS performance.
+            </p>
 
           </div>
 
-          {/* Average Match Score */}
-          <div className="mt-6 rounded-xl bg-white p-6 shadow-sm">
+          {/* Stats */}
+          <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 xl:grid-cols-4">
 
-            <div className="flex items-center gap-3">
+            {stats.map((stat) => {
+              const Icon = stat.icon;
 
-              <div className="rounded-lg bg-indigo-100 p-3">
-                <Bot
-                  className="text-indigo-600"
-                  size={28}
-                />
+              return (
+                <div
+                  key={stat.title}
+                  className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm transition hover:-translate-y-0.5 hover:shadow-md"
+                >
+                  <div className="flex items-start justify-between">
+
+                    <div>
+                      <p className="text-sm font-medium text-slate-500">
+                        {stat.title}
+                      </p>
+
+                      <h2 className="mt-3 text-3xl font-bold tracking-tight text-slate-900">
+                        {stat.value}
+                      </h2>
+                    </div>
+
+                    <div
+                      className={`flex h-11 w-11 items-center justify-center rounded-xl ${stat.bg}`}
+                    >
+                      <Icon
+                        size={22}
+                        className={stat.iconColor}
+                      />
+                    </div>
+
+                  </div>
+                </div>
+              );
+            })}
+
+          </div>
+
+          {/* Match Score */}
+          <div className="mt-6 rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
+
+            <div className="flex flex-col gap-6 sm:flex-row sm:items-center sm:justify-between">
+
+              <div className="flex items-center gap-4">
+
+                <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-indigo-50">
+                  <Bot
+                    size={24}
+                    className="text-indigo-600"
+                  />
+                </div>
+
+                <div>
+                  <p className="text-sm font-medium text-slate-500">
+                    Average Job Match Score
+                  </p>
+
+                  <h2 className="mt-1 text-3xl font-bold text-slate-900">
+                    {dashboard.averageMatchScore}%
+                  </h2>
+                </div>
+
               </div>
 
-              <div>
-                <p className="text-slate-500">
-                  Average Job Match Score
-                </p>
+              <div className="w-full sm:w-64">
 
-                <h2 className="mt-1 text-4xl font-bold text-indigo-600">
-                  {dashboard.averageMatchScore}%
-                </h2>
+                <div className="mb-2 flex justify-between text-xs text-slate-500">
+                  <span>Match performance</span>
+                  <span>{dashboard.averageMatchScore}%</span>
+                </div>
+
+                <div className="h-2.5 overflow-hidden rounded-full bg-slate-100">
+                  <div
+                    className="h-full rounded-full bg-indigo-600 transition-all"
+                    style={{
+                      width: `${Math.min(
+                        dashboard.averageMatchScore || 0,
+                        100
+                      )}%`,
+                    }}
+                  ></div>
+                </div>
+
               </div>
 
             </div>
@@ -196,7 +209,21 @@ function Dashboard() {
 
           {/* Resume Upload */}
           <div className="mt-6">
+
+            <div className="mb-4">
+
+              <h2 className="text-lg font-semibold text-slate-900">
+                Upload Resume
+              </h2>
+
+              <p className="mt-1 text-sm text-slate-500">
+                Upload your resume to analyze it with AI.
+              </p>
+
+            </div>
+
             <ResumeUpload />
+
           </div>
 
         </div>
@@ -265,6 +292,15 @@ function App() {
   element={
     <ProtectedRoute>
       <AddJob />
+    </ProtectedRoute>
+  }
+/>
+
+<Route
+  path="/ai-suggestions"
+  element={
+    <ProtectedRoute>
+      <AISuggestions />
     </ProtectedRoute>
   }
 />
